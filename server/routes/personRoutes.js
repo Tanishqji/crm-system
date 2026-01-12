@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const Person = require('../models/Person');
 
 // Get all persons
 router.get('/', async (req, res) => {
+    if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({ message: 'Database not connected yet. Please try again in a few seconds.' });
+    }
     try {
         const persons = await Person.find();
         res.json(persons);

@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const Lead = require('../models/Lead');
 
 // Get all leads
 router.get('/', async (req, res) => {
+    if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({ message: 'Database not connected yet. Please try again in a few seconds.' });
+    }
     try {
         const leads = await Lead.find().populate('personId');
         res.json(leads);
